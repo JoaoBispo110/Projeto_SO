@@ -1,6 +1,5 @@
-Program_List:= Proc1.bin Execprocd.bin Execproc.bin
+Program_List:= Proc1 Execprocd Execproc
 
-all: $(Program_List)
-
-$(Program_List): %.bin : %
-	cd $^ && $(MAKE) all
+all:
+	$(foreach var,$(Program_List), $(MAKE) all -C $(var);)
+	
