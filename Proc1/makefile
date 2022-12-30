@@ -20,3 +20,7 @@ $(EXEC_PATH): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $(EXEC_PATH)
 
 $(OBJS):
+
+clean:
+	rm $(EXEC_PATH)
+	rm src/*.o
