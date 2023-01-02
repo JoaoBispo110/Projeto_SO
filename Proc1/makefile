@@ -1,6 +1,6 @@
 CC:=gcc
 
-CFLAGS:=-O0
+CFLAGS:=-I,include/ -O0
 ifdef DEBUG
 	CFLAGS+= -g
 endif
