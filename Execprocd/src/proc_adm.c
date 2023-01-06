@@ -5,14 +5,14 @@
 #include <signal.h>
 #include "proc_adm.h"
 
-int RequestNewProc(){
+char* RequestNewProcName(){
 	char prog[1000];
 
 	printf("Qual programa executar?\n");
 
 	scanf("%s", prog);
 
-	return InitNewProc(prog);
+	return prog;
 }
 
 int InitNewProc(char prog[]){
@@ -37,6 +37,18 @@ void KillProc(int pid){
 	SignalProc(pid, -9);
 }
 
-void SignalProc(int pid, int signal){
-	kill(pid, signal);
+void StopProc(int pid){
+	SignalProc(pid, SIGSTOP);
+}
+
+void ContProc(int pid){
+	SignalProc(pid, SIGCONT);
+}
+
+int CheckProc(int pid){
+	return (SignalProc(pid, 0) == 0);
+}
+
+int SignalProc(int pid, int signal){
+	return kill(pid, signal);
 }
