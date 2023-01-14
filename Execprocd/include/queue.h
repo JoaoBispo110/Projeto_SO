@@ -5,6 +5,9 @@
 		int id;
 		int pid;
 		char* name;
+		int flag;
+		int status;
+		int ppid;
 		struct Process* next;
 		//Process* prev;
 	} Proc;
@@ -15,7 +18,7 @@
 	} Queue;
 
 	void InitQ(Queue queue);
-	void Enqueue(Queue queue, int id, int pid, char name[]);
+	void Enqueue(Queue queue, int id, int pid, char name[], int flag,int status,int ppid);
 	Proc* Dequeue(Queue queue);
 
 #endif

@@ -6,13 +6,16 @@ void InitQ(Queue queue){
 	queue.tail = NULL;
 }
 
-void Enqueue(Queue queue, int id, int pid, char name[]){
+void Enqueue(Queue queue, int id, int pid, char name[], int flag,int status,int ppid){
 	Proc* process;
 
 	process = malloc( sizeof(Proc) );
 	process->pid = pid;
 	process->id = id;
 	process->name = name;
+	process->flag = flag;
+	process->ppid = ppid;
+	process->status = status;
 	process->next = NULL;
 	//process->prev = NULL;
 
