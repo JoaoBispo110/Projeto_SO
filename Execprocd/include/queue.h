@@ -2,7 +2,7 @@
 #define QUEUE	
 
 	typedef struct Process{
-		int id;
+		int idfila;
 		int pid;
 		char* name;
         int ppid;
@@ -19,7 +19,7 @@
 	} Queue;
 
 	void InitQ(Queue queue);
-	void Enqueue(Queue queue, int id, int pid,char name[],int ppid,int retpid,int flag,int status);
+	void Enqueue(Queue queue, int idfila, int pid,char name[],int ppid,int retpid,int flag,int status);
 	Proc* Dequeue(Queue queue);
 
 #endif
