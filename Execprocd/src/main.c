@@ -70,7 +70,7 @@ int main()
 				strcpy( argv[i], &((messageChar.msgs)[(i+1)*maior]) );
 			}
 
-			Enqueue(&highPQ, ++id, 0, argv, argc-1, 0, 0, 0);
+			Enqueue(&highPQ, ++id, 0, argv, argc-1, 0, 0, prioridade, 0);
 
 			for(int i = 0; i < argc; i++){
 				free(argv[i]);
@@ -106,7 +106,7 @@ int main()
 		if( (currentProc != NULL) && (difftime(time(NULL), startTime) >= 10) ){
 			if(CheckProc(currentProc->pid)){
 				StopProc(currentProc->pid);
-				Enqueue(&highPQ, currentProc->id, currentProc->pid, currentProc->argv, currentProc->argc, currentProc->flag, currentProc->status, currentProc->startTime);
+				Enqueue(&highPQ, currentProc->id, currentProc->pid, currentProc->argv, currentProc->argc, currentProc->flag, currentProc->status, currentProc->prioridade, currentProc->startTime);
 				FreeProc(&currentProc);
 			}
 			else{
