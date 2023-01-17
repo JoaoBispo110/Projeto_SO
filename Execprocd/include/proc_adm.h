@@ -1,8 +1,7 @@
 #ifndef PROC_ADM
 #define PROC_ADM	
 
-	char* RequestNewProcName();
-	int InitNewProc(char prog[]);
+	int InitNewProc(char** argv);
 	void KillProc(int pid);
 	void StopProc(int pid);
 	void ContProc(int pid);
