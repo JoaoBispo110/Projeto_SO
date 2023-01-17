@@ -24,7 +24,7 @@ int InitNewProc(char** argv){
 }
 
 void KillProc(int pid){
-	SignalProc(pid, -9);
+	SignalProc(pid, SIGTERM);
 }
 
 void StopProc(int pid){
@@ -36,7 +36,7 @@ void ContProc(int pid){
 }
 
 int CheckProc(int pid){
-	return (SignalProc(pid, 0) != 0);
+	return (SignalProc(pid, 0) == 0);
 }
 
 int SignalProc(int pid, int signal){
