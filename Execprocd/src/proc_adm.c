@@ -1,8 +1,10 @@
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+
 #include "proc_adm.h"
 
 int InitNewProc(char** argv){
@@ -24,7 +26,7 @@ int InitNewProc(char** argv){
 }
 
 void KillProc(int pid){
-	SignalProc(pid, -9);
+	SignalProc(pid, SIGKILL);
 }
 
 void StopProc(int pid){
@@ -36,7 +38,7 @@ void ContProc(int pid){
 }
 
 int CheckProc(int pid){
-	return (SignalProc(pid, 0) != 0);
+	return (waitpid(pid, NULL, WNOHANG) == 0);
 }
 
 int SignalProc(int pid, int signal){

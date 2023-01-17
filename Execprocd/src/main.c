@@ -17,11 +17,8 @@ int terminate = false;
 int idfila = -1;
 
 void HandleSignal(int signal){
-	if(signal == SIGTERM){
+	if(signal == SIGINT){
 		terminate = true;
-		if(idfila > -1){
-			msgctl(idfila, IPC_RMID, NULL);
-		}
 		return;
 	}
 }
@@ -36,6 +33,7 @@ int main()
 	Proc* currentProc = NULL;
 	int argc;
 	int maior;
+	int checkProc;
 	struct MsgInt{ long m_type; int m_text; };
 	struct MsgInt messageInt;
 
@@ -46,9 +44,9 @@ int main()
 	struct msqid_ds aux;
 	//msgctl(idfila, IPC_STAT, &aux);
 
-	while(!terminate){
-		signal(SIGINT, HandleSignal);
+	signal(SIGINT, HandleSignal);
 
+	while(!terminate){
 		errno = 0;
 		msgrcv(idfila, &messageInt, sizeof(int), 1, IPC_NOWAIT);
 		if( errno != ENOMSG ){
@@ -69,15 +67,23 @@ int main()
 				strcpy( argv[i], &((messageChar.msgs)[i*maior]) );
 			}
 
-			Enqueue(&highPQ, ++id, 0, argv, 0, 0, 0);
-		}
+			Enqueue(&highPQ, ++id, 0, argv, argc, 0, 0, 0);
 
-		if( (currentProc == NULL) || ( (currentProc->pid = 0) || ( !CheckProc(currentProc->pid) ) ) ){
-			if( (currentProc != NULL) && ( !CheckProc(currentProc->pid) ) ){
-				wait(NULL);
-				free(currentProc->argv);
-				free(currentProc);
-				currentProc = NULL;
+			for(int i = 0; i < argc; i++){
+				free(argv[i]);
+			}
+			free(argv);
+
+			messageInt.m_type = 10;
+			messageInt.m_text = id;
+			msgsnd(idfila, &messageInt, sizeof(int), 0);
+		}
+		if(currentProc != NULL){
+			checkProc = CheckProc(currentProc->pid);
+		}
+		if( (currentProc == NULL) || ( (currentProc->pid == 0) || ( !checkProc ) ) ){
+			if( (currentProc != NULL) && ( !checkProc ) ){
+				EndProc(&currentProc, true);
 			}
 			if(currentProc == NULL){
 				currentProc = Dequeue(&highPQ);
@@ -97,14 +103,31 @@ int main()
 		if( (currentProc != NULL) && (difftime(time(NULL), startTime) >= 10) ){
 			if(CheckProc(currentProc->pid)){
 				StopProc(currentProc->pid);
+				Enqueue(&highPQ, currentProc->id, currentProc->pid, currentProc->argv, currentProc->argc, currentProc->flag, currentProc->status, currentProc->startTime);
+				FreeProc(&currentProc);
 			}
 			else{
-				wait(NULL);
+				EndProc(&currentProc, true);
 			}
-			Enqueue(&highPQ, currentProc->id, currentProc->pid, currentProc->argv, currentProc->flag, currentProc->status, currentProc->startTime);
-			free(currentProc->argv);
-			free(currentProc);
-			currentProc = NULL;
+		}
+
+		errno = 0;
+		msgrcv(idfila, &messageInt, sizeof(int), 2, IPC_NOWAIT);
+		if(errno != ENOMSG){
+			if(currentProc != NULL && currentProc->id == messageInt.m_text){
+				EndRuningProc(&currentProc);
+			}
+			else{
+				if(RemoveProcFromQueue(&highPQ, messageInt.m_text) != 0){
+					printf("Couldnt find process with id = %d\n", messageInt.m_text);
+				}
+			}
+		}
+
+		errno = 0;
+		msgrcv(idfila, &messageInt, 0, 5, IPC_NOWAIT);
+		if(errno != ENOMSG){
+			break;
 		}
 	}
 
@@ -113,17 +136,11 @@ int main()
 	}
 
 	if(currentProc != NULL){
-		KillProc(currentProc->pid);
-		free(currentProc->argv);
-		free(currentProc);
+		EndRuningProc(&currentProc);
 	}
 
 	while(( currentProc = Dequeue(&highPQ) ) != NULL){
-		if(currentProc->pid != 0){
-			KillProc(currentProc->pid);
-		}
-		free(currentProc->argv);
-		free(currentProc);
+		EndRuningProc(&currentProc);
 	}
 
 	return 0;

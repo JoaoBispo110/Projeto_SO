@@ -4,9 +4,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
-
-#define MSGQSND 0x160000
-#define MSGQRCV 0x160001
+#include <errno.h>
 
 int main(int argc, char** argv)
 {
@@ -15,9 +13,21 @@ int main(int argc, char** argv)
 
 
     msgid = atoi(argv[1]); // id do processo a ser cancelado
-    msqid_snd = msgget(MSGQSND, IPC_CREAT | 0600 );
+    msqid_snd = msgget(170067793, 0x124);
+
     printf("id = %d\n", msgid);
-    msgsnd(msqid_snd, &msgid, sizeof(int), 0);
+    
+    struct Msg { long m_type; int m_content; };
+    struct Msg msg;
+    
+    msg.m_type = 2;
+    msg.m_content = msgid;
+    
+    msgsnd(msqid_snd, &msg, sizeof(int), 0);
+    if(errno != 0){
+        printf("errno diferent from 0\n");
+        printf("errno = %d\n", errno);
+    }
 
     return 0;
 }

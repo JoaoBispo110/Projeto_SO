@@ -55,6 +55,10 @@ int main(int argc, char const *argv[])
 			printf("errno diferent from 0\n");
 			printf("errno = %d\n", errno);
 		}
+
+		msgrcv(idFila, &messageInt, sizeof(int), 10, 0);
+
+		printf("Id of process: %d\n", messageInt.mcontent);
 	}
 
 	return 0;
