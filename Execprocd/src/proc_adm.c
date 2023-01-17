@@ -5,17 +5,7 @@
 #include <signal.h>
 #include "proc_adm.h"
 
-char* RequestNewProcName(){
-	char prog[1000];
-
-	printf("Qual programa executar?\n");
-
-	scanf("%s", prog);
-
-	return prog;
-}
-
-int InitNewProc(char prog[]){
+int InitNewProc(char** argv){
 	int pid;
 
 	pid = fork();
@@ -25,8 +15,8 @@ int InitNewProc(char prog[]){
 		exit(-1);
 	}
 	else if(pid == 0){
-		execl(prog, prog, (char *)NULL);
-		printf("Execl returned!\n");
+		execv(argv[0], argv);
+		printf("Execv returned!\n");
 		exit(-2);
 	}
 
@@ -46,7 +36,7 @@ void ContProc(int pid){
 }
 
 int CheckProc(int pid){
-	return (SignalProc(pid, 0) == 0);
+	return (SignalProc(pid, 0) != 0);
 }
 
 int SignalProc(int pid, int signal){
