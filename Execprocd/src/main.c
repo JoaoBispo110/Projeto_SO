@@ -123,6 +123,12 @@ int main()
 				}
 			}
 		}
+
+		errno = 0;
+		msgrcv(idfila, &messageInt, 0, 5, IPC_NOWAIT);
+		if(errno != ENOMSG){
+			break;
+		}
 	}
 
 	if(idfila > -1){

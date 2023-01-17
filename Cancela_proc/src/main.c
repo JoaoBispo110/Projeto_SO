@@ -6,9 +6,6 @@
 #include <sys/msg.h>
 #include <errno.h>
 
-#define MSGQSND 0x160000
-#define MSGQRCV 0x160001
-
 int main(int argc, char** argv)
 {
     int msqid_snd;
