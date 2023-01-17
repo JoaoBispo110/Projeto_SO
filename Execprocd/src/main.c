@@ -28,6 +28,7 @@ int main()
 	int id = 0;
 	char* name;
 	char command = 0;
+	int prioridade;
 	Queue highPQ;
 	int	startTime;
 	Proc* currentProc = NULL;
@@ -62,12 +63,14 @@ int main()
 			
 			msgrcv(idfila, &messageChar, sizeof(messageChar.msgs), 1, 0);
 
-			for(int i = 0; i < argc; i++){
-				argv[i] = malloc(strlen(&((messageChar.msgs)[i*maior])));
-				strcpy( argv[i], &((messageChar.msgs)[i*maior]) );
+			prioridade = atoi(&(messageChar.msgs[0]));
+
+			for(int i = 0; i < (argc-1); i++){
+				argv[i] = malloc(strlen(&((messageChar.msgs)[(i+1)*maior])));
+				strcpy( argv[i], &((messageChar.msgs)[(i+1)*maior]) );
 			}
 
-			Enqueue(&highPQ, ++id, 0, argv, argc, 0, 0, 0);
+			Enqueue(&highPQ, ++id, 0, argv, argc-1, 0, 0, 0);
 
 			for(int i = 0; i < argc; i++){
 				free(argv[i]);
