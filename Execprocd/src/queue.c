@@ -67,11 +67,11 @@ void EndRuningProc(Proc** proc){
 	if((*proc)->pid != 0){
 		if(CheckProc((*proc)->pid)){
 			KillProc((*proc)->pid);
+			wait(NULL);
 		}
 		else{
 			finished = true;
 		}
-		wait(NULL);
 	}
 
 	EndProc(proc, finished);

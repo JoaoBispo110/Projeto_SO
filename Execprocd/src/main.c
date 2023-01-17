@@ -33,6 +33,7 @@ int main()
 	Proc* currentProc = NULL;
 	int argc;
 	int maior;
+	int checkProc;
 	struct MsgInt{ long m_type; int m_text; };
 	struct MsgInt messageInt;
 
@@ -77,11 +78,12 @@ int main()
 			messageInt.m_text = id;
 			msgsnd(idfila, &messageInt, sizeof(int), 0);
 		}
-
-		if( (currentProc == NULL) || ( (currentProc->pid == 0) || ( !CheckProc(currentProc->pid) ) ) ){
-			if( (currentProc != NULL) && ( !CheckProc(currentProc->pid) ) ){
-				wait(NULL);
-				FreeProc(&currentProc);
+		if(currentProc != NULL){
+			checkProc = CheckProc(currentProc->pid);
+		}
+		if( (currentProc == NULL) || ( (currentProc->pid == 0) || ( !checkProc ) ) ){
+			if( (currentProc != NULL) && ( !checkProc ) ){
+				EndProc(&currentProc, true);
 			}
 			if(currentProc == NULL){
 				currentProc = Dequeue(&highPQ);
@@ -101,12 +103,12 @@ int main()
 		if( (currentProc != NULL) && (difftime(time(NULL), startTime) >= 10) ){
 			if(CheckProc(currentProc->pid)){
 				StopProc(currentProc->pid);
+				Enqueue(&highPQ, currentProc->id, currentProc->pid, currentProc->argv, currentProc->argc, currentProc->flag, currentProc->status, currentProc->startTime);
+				FreeProc(&currentProc);
 			}
 			else{
-				wait(NULL);
+				EndProc(&currentProc, true);
 			}
-			Enqueue(&highPQ, currentProc->id, currentProc->pid, currentProc->argv, currentProc->argc, currentProc->flag, currentProc->status, currentProc->startTime);
-			FreeProc(&currentProc);
 		}
 
 		errno = 0;
