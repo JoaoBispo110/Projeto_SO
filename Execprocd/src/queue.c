@@ -19,7 +19,7 @@ void InitQ(Queue* queue){
 	queue->tail = NULL;
 }
 
-void Enqueue(Queue* queue, int id, int pid, char** argv, int argc, int flag, int status, int startTime){
+void Enqueue(Queue* queue, int id, int pid, char** argv, int argc, int flag, int status, int prioridade, int startTime){
 	Proc* process;
 
 	process = malloc( sizeof(Proc) );
@@ -33,6 +33,7 @@ void Enqueue(Queue* queue, int id, int pid, char** argv, int argc, int flag, int
 	}
 	process->flag=flag;
 	process->status=status;
+	process->prioridade = prioridade;
 	process->next = NULL;
 	//process->prev = NULL;
 	process->startTime = startTime;
@@ -136,4 +137,46 @@ int RemoveProcFromQueue(Queue* queue, int id){
 	}
 
 	return -1;
+}
+
+int sizeofQueue(Queue *queue)
+{
+	int size = 0;
+	Proc* runner = queue->head;
+	if (runner == NULL)
+	{
+		return 0;
+	}
+
+	while (runner->next != NULL)
+	{
+		runner = runner->next;
+		size++;
+	}
+	
+	return size;
+}
+
+int randomscheduler()// add all queues (possible to generalize)
+{
+	return (rand() % QUEUE_SIZE);
+}
+
+int escalonador(Proc* proc, char t_escalonador)
+{
+	switch (t_escalonador)
+	{
+	case 'd':
+		//implementação escalonador dinamico
+		break;
+	case 'e':
+		return proc->prioridade; // mantem na mesma fila de prioridade
+		break;
+	case 'r':
+		return randomscheduler();
+		break;
+	default:
+		return -1;
+		break;
+	}
 }
