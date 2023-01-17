@@ -1,10 +1,6 @@
-#include <time.h>
-
 int main()
 {
-	int begin_time = time(NULL);
-
-	while( difftime(time(NULL), begin_time) < 30. ){}
+	for(double i = 0; i < 15999999999; i++);
 
 	return 0;
 }

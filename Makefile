@@ -1,4 +1,4 @@
-Program_List:= Proc1 Execprocd Execproc
+Program_List:= Proc1 Execprocd Execproc Cancela_proc Termina_execprocd
 
 bin: 
 	mkdir bin
