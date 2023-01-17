@@ -53,7 +53,7 @@ int main(int argc, char const *argv[])
 		PrintHelp();
 		return 1;
 	}
-	switch (argv[0][0]){
+	switch (argv[1][0]){
 	case 'h':
 	case 'H':
 		PrintHelp();
@@ -64,7 +64,7 @@ int main(int argc, char const *argv[])
 	case 'D':
 	case 'r':
 	case 'R':
-		which_scheduler = argv[0][0];
+		which_scheduler = argv[1][0];
 		break;
 	default:
 		printf("Invalid Argument\n");
