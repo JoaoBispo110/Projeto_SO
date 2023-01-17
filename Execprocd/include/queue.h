@@ -29,6 +29,7 @@
 	int RemoveProcFromQueue(Queue* queue, int id);
 	int sizeofQueue(Queue* queue);
 	int randomscheduler();
+	int escalonador(Proc* proc, char t_escalonador);
 
 
 #endif

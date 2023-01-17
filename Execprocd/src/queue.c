@@ -176,6 +176,7 @@ int escalonador(Proc* proc, char t_escalonador)
 		return randomscheduler();
 		break;
 	default:
+		return -1;
 		break;
 	}
 }
