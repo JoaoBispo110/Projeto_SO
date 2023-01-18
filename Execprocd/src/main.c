@@ -39,6 +39,9 @@ int main(int argc, char const *argv[])
 	char* name;
 	char command = 0;
 	int prioridade;
+	int startedproc = 0;
+	int contextSwitchG = 0;
+	int canceledproc = 0;
 	Queue priorityQ[QUEUE_SIZE];
 	int	startTime;
 	Proc* currentProc = NULL;
@@ -109,7 +112,8 @@ int main(int argc, char const *argv[])
 				strcpy( m_argv[i], &((messageChar.msgs)[(i+1)*maior]) );
 			}
 
-			Enqueue(&(priorityQ[prioridade]), ++id, 0, m_argv, m_argc-1, 0, 0, prioridade, 0);
+			Enqueue(&(priorityQ[prioridade]), ++id, 0, m_argv, m_argc-1, 0, prioridade, 0);
+			startedproc++;
 
 			for(int i = 0; i < m_argc; i++){
 				free(m_argv[i]);
@@ -149,8 +153,11 @@ int main(int argc, char const *argv[])
 		if( (currentProc != NULL) && (difftime(time(NULL), startTime) >= 10) ){
 			if(CheckProc(currentProc->pid)){
 				StopProc(currentProc->pid);
-				prioridade = escalonador(currentProc, which_scheduler);
-				Enqueue(&(priorityQ[prioridade]), currentProc->id, currentProc->pid, currentProc->argv, currentProc->argc, currentProc->flag, currentProc->status, prioridade, currentProc->startTime);
+				prioridade = escalonador(currentProc, which_scheduler); //definir prioridade do processo
+				contextSwitchG++;
+				printf("id=%d\tcs=%d", currentProc->id, currentProc->contextSwitch);
+				currentProc->contextSwitch++; //contabilizar troca de contexto
+				Enqueue(&(priorityQ[prioridade]), currentProc->id, currentProc->pid, currentProc->argv, currentProc->argc, currentProc->contextSwitch, prioridade, currentProc->startTime);
 				FreeProc(&currentProc);
 			}
 			else{
@@ -163,11 +170,13 @@ int main(int argc, char const *argv[])
 		if(errno != ENOMSG){
 			if(currentProc != NULL && currentProc->id == messageInt.m_text){
 				EndRuningProc(&currentProc);
+				canceledproc++;
 			}
 			else{
 				int i;
 				for(i = 0; i < QUEUE_SIZE; i++){
 					if(RemoveProcFromQueue(&(priorityQ[i]), messageInt.m_text) == 0){
+						canceledproc++;
 						break;
 					}
 				}
@@ -190,13 +199,18 @@ int main(int argc, char const *argv[])
 
 	if(currentProc != NULL){
 		EndRuningProc(&currentProc);
+		canceledproc++;
 	}
 
 	for(int i = 0; i < QUEUE_SIZE; i++){
 		while(( currentProc = Dequeue(&(priorityQ[i])) ) != NULL){
 			EndRuningProc(&currentProc);
+			canceledproc++;
 		}
 	}
-
+	printf("\nNumber of processes started: %d\n", startedproc);
+	printf("Number of processes finalized: %d\n", startedproc-canceledproc);
+	printf("Number of processes canceled: %d\n", canceledproc);
+	printf("Number of context switches: %d\n", contextSwitchG);
 	return 0;
 }

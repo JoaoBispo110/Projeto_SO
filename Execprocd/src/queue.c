@@ -19,7 +19,7 @@ void InitQ(Queue* queue){
 	queue->tail = NULL;
 }
 
-void Enqueue(Queue* queue, int id, int pid, char** argv, int argc, int flag, int status, int prioridade, int startTime){
+void Enqueue(Queue* queue, int id, int pid, char** argv, int argc, int contextSwitch, int prioridade, int startTime){
 	Proc* process;
 
 	process = malloc( sizeof(Proc) );
@@ -31,8 +31,7 @@ void Enqueue(Queue* queue, int id, int pid, char** argv, int argc, int flag, int
 		process->argv[i] = malloc(strlen(argv[i]));
 		strcpy(process->argv[i], argv[i]);
 	}
-	process->flag=flag;
-	process->status=status;
+	process->contextSwitch=contextSwitch;
 	process->prioridade = prioridade;
 	process->next = NULL;
 	//process->prev = NULL;
@@ -79,15 +78,19 @@ void EndRuningProc(Proc** proc){
 }
 
 void EndProc(Proc** proc, int finished){ 
-	printf("Process: %d, ended\n", (*proc)->id);
+	printf("\nProcess: %d, ended\n", (*proc)->id);
 	if((*proc)->startTime != 0){
-		printf("Turnout time = %f seconds\n", difftime(time(NULL), (*proc)->startTime));
+		printf("turnaround time = %f seconds\n", difftime(time(NULL), (*proc)->startTime));		
+		printf("Context Switch = %d\n", (*proc)->contextSwitch);
 		if(finished){
 			printf("Process finished\n");
 		}
 		else{
 			printf("Process was interrupted\n");
 		}
+	}else{
+		printf("Process was cancelled before running\n");
+		printf("Context Switch = 0\n");
 	}
 
 	FreeProc(proc);
@@ -162,12 +165,18 @@ int randomscheduler()// add all queues (possible to generalize)
 	return (rand() % QUEUE_SIZE);
 }
 
+int dinamicscheduler(Proc* proc)
+{
+	
+}
+
 int escalonador(Proc* proc, char t_escalonador)
 {
 	switch (t_escalonador)
 	{
 	case 'd':
 		//implementação escalonador dinamico
+		return 0;
 		break;
 	case 'e':
 		return proc->prioridade; // mantem na mesma fila de prioridade

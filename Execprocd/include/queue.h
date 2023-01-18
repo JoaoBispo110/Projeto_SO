@@ -7,8 +7,7 @@
 		int pid;
 		char** argv;
 		int argc;
-        int flag;
-        int status;
+		int contextSwitch;
 		int prioridade;
 		int startTime;
 		struct Process* next;
@@ -21,7 +20,7 @@
 	} Queue;
 
 	void InitQ(Queue* queue);
-	void Enqueue(Queue* queue, int id, int pid, char** argv, int argc, int flag, int status, int prioridade, int startTime);
+	void Enqueue(Queue* queue, int id, int pid, char** argv, int argc, int contextSwitch, int prioridade, int startTime);
 	Proc* Dequeue(Queue* queue);
 	void EndRuningProc(Proc** proc);
 	void EndProc(Proc** proc, int finished);
