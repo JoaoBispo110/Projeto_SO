@@ -28,7 +28,6 @@ void PrintHelp(){
 	printf("Options:\n");
 	printf("\th :\tPrints this help.\n");
 	printf("\te :\tExecutes with scheduler in static mode.\n");
-	printf("\td :\tExecutes with scheduler in dinamic mode.\n");
 	printf("\tr :\tExecutes with scheduler in random mode.\n");
 }
 
@@ -63,8 +62,6 @@ int main(int argc, char const *argv[])
 		return 0;
 	case 'e':
 	case 'E':
-	case 'd':
-	case 'D':
 	case 'r':
 	case 'R':
 		which_scheduler = argv[1][0];
@@ -155,7 +152,6 @@ int main(int argc, char const *argv[])
 				StopProc(currentProc->pid);
 				prioridade = escalonador(currentProc, which_scheduler); //definir prioridade do processo
 				contextSwitchG++;
-				printf("id=%d\tcs=%d", currentProc->id, currentProc->contextSwitch);
 				currentProc->contextSwitch++; //contabilizar troca de contexto
 				Enqueue(&(priorityQ[prioridade]), currentProc->id, currentProc->pid, currentProc->argv, currentProc->argc, currentProc->contextSwitch, prioridade, currentProc->startTime);
 				FreeProc(&currentProc);
