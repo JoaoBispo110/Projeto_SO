@@ -5,7 +5,7 @@ ifdef DEBUG
 	CFLAGS+= -g
 endif
 
-EXEC_NAME:=termina_execprocd
+EXEC_NAME:=shutdown_execprocd
 EXEC_DIR:=../bin/
 
 EXEC_PATH:=$(EXEC_DIR)$(EXEC_NAME)
